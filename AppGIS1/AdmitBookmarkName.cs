@@ -29,7 +29,6 @@ namespace AppGIS1
         {
             if (m_frmMain != null || tbBookmarkName.Text == "")
             {
-
                 m_frmMain.CreateBookmark(tbBookmarkName.Text);
             }
             this.Close();

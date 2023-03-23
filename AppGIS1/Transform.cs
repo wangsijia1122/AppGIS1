@@ -26,7 +26,7 @@ namespace AppGIS1
             textBox4.Text= targetName;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e) // 点击确认事件
         {
             string sourcePath = textBox1.Text;
             string sourceName = textBox2.Text;
@@ -57,9 +57,19 @@ namespace AppGIS1
             {
                 ipWsFactoryLock.DisableSchemaLocking();
             }
-
+            
             bool Con_result = ConvertFeatureClass(workspace1, workspace2, sourceName, targetName, null);
+            if (Con_result == true)
+            {
+                this.Close(); // 关闭本窗体
+            }
+            else
+            {
+                MessageBox.Show("运行失败！");
+                return;
+            }
         }
+
         public static bool ConvertFeatureClass(
             IWorkspace sourceWorkspace,
             IWorkspace targetWorkspace,
@@ -97,8 +107,6 @@ namespace AppGIS1
             fieldChecker.InputWorkspace = sourceWorkspace;
             fieldChecker.ValidateWorkspace = targetWorkspace;
             fieldChecker.Validate(sourceFeatureClassFields, out enumFieldError, out targetFeatureClassFields);
-
-            
 
             //返回信息是否存在不匹配的字段
             if (enumFieldError != null)
@@ -145,6 +153,33 @@ namespace AppGIS1
             }
             return false;
 
+        }
+
+        private void sourcebutton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.Description = "请选择输入数据位置";
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                textBox1.Text = folderBrowserDialog.SelectedPath;
+            }
+
+            /*OpenFileDialog dialog = new OpenFileDialog();//文件和扩展名一同显示在txtboxPath控件中
+            if (dialog .ShowDialog() == DialogResult.OK)
+            {
+                this.txtboxPath.SelectedText = dialog.FileName;                   
+            }*/
+
+        }
+
+        private void targetbutton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.Description = "请选择输出数据位置";
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                textBox3.Text = folderBrowserDialog.SelectedPath;
+            }
         }
     }
 }
