@@ -37,7 +37,9 @@ namespace AppGIS1
             this.空间类型ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miAccessData = new System.Windows.Forms.ToolStripMenuItem();
             this.transformData = new System.Windows.Forms.ToolStripMenuItem();
-            this.地图输出ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miCarto = new System.Windows.Forms.ToolStripMenuItem();
+            this.miRenderSimply = new System.Windows.Forms.ToolStripMenuItem();
+            this.miGetRendererInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.命令菜单ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.地图组成ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pageLayout对象ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,7 +79,7 @@ namespace AppGIS1
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.文件ToolStripMenuItem,
             this.空间类型ToolStripMenuItem,
-            this.地图输出ToolStripMenuItem,
+            this.miCarto,
             this.命令菜单ToolStripMenuItem,
             this.地图组成ToolStripMenuItem,
             this.pageLayout对象ToolStripMenuItem,
@@ -134,11 +136,28 @@ namespace AppGIS1
             this.transformData.Text = "空间数据转换";
             this.transformData.Click += new System.EventHandler(this.transformData_Click);
             // 
-            // 地图输出ToolStripMenuItem
+            // miCarto
             // 
-            this.地图输出ToolStripMenuItem.Name = "地图输出ToolStripMenuItem";
-            this.地图输出ToolStripMenuItem.Size = new System.Drawing.Size(98, 28);
-            this.地图输出ToolStripMenuItem.Text = "地图输出";
+            this.miCarto.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miRenderSimply,
+            this.miGetRendererInfo});
+            this.miCarto.Name = "miCarto";
+            this.miCarto.Size = new System.Drawing.Size(98, 28);
+            this.miCarto.Text = "地图表现";
+            // 
+            // miRenderSimply
+            // 
+            this.miRenderSimply.Name = "miRenderSimply";
+            this.miRenderSimply.Size = new System.Drawing.Size(270, 34);
+            this.miRenderSimply.Text = "简单渲染图层";
+            this.miRenderSimply.Click += new System.EventHandler(this.miRenderSimply_Click);
+            // 
+            // miGetRendererInfo
+            // 
+            this.miGetRendererInfo.Name = "miGetRendererInfo";
+            this.miGetRendererInfo.Size = new System.Drawing.Size(270, 34);
+            this.miGetRendererInfo.Text = "获取渲染器信息";
+            this.miGetRendererInfo.Click += new System.EventHandler(this.miGetRendererInfo_Click);
             // 
             // 命令菜单ToolStripMenuItem
             // 
@@ -226,7 +245,7 @@ namespace AppGIS1
             // 
             this.splitContainer2.Panel2.Controls.Add(this.axMapControl2);
             this.splitContainer2.Size = new System.Drawing.Size(350, 401);
-            this.splitContainer2.SplitterDistance = 92;
+            this.splitContainer2.SplitterDistance = 91;
             this.splitContainer2.TabIndex = 0;
             // 
             // axTOCControl1
@@ -235,8 +254,9 @@ namespace AppGIS1
             this.axTOCControl1.Location = new System.Drawing.Point(0, 0);
             this.axTOCControl1.Name = "axTOCControl1";
             this.axTOCControl1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axTOCControl1.OcxState")));
-            this.axTOCControl1.Size = new System.Drawing.Size(350, 92);
+            this.axTOCControl1.Size = new System.Drawing.Size(350, 91);
             this.axTOCControl1.TabIndex = 0;
+            this.axTOCControl1.OnMouseDown += new ESRI.ArcGIS.Controls.ITOCControlEvents_Ax_OnMouseDownEventHandler(this.axTOCControl1_OnMouseDown);
             // 
             // axMapControl2
             // 
@@ -244,7 +264,7 @@ namespace AppGIS1
             this.axMapControl2.Location = new System.Drawing.Point(0, 0);
             this.axMapControl2.Name = "axMapControl2";
             this.axMapControl2.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axMapControl2.OcxState")));
-            this.axMapControl2.Size = new System.Drawing.Size(350, 305);
+            this.axMapControl2.Size = new System.Drawing.Size(350, 306);
             this.axMapControl2.TabIndex = 0;
             this.axMapControl2.OnMouseDown += new ESRI.ArcGIS.Controls.IMapControlEvents2_Ax_OnMouseDownEventHandler(this.axMapControl2_OnMouseDown);
             this.axMapControl2.OnMouseMove += new ESRI.ArcGIS.Controls.IMapControlEvents2_Ax_OnMouseMoveEventHandler(this.axMapControl2_OnMouseMove);
@@ -274,7 +294,7 @@ namespace AppGIS1
             // 
             this.cbBookmarkList.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cbBookmarkList.FormattingEnabled = true;
-            this.cbBookmarkList.Location = new System.Drawing.Point(680, 6);
+            this.cbBookmarkList.Location = new System.Drawing.Point(684, 6);
             this.cbBookmarkList.Name = "cbBookmarkList";
             this.cbBookmarkList.Size = new System.Drawing.Size(122, 26);
             this.cbBookmarkList.TabIndex = 3;
@@ -328,7 +348,7 @@ namespace AppGIS1
         private ESRI.ArcGIS.Controls.AxMapControl axMapControl1;
         private System.Windows.Forms.ToolStripMenuItem 文件ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 空间类型ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 地图输出ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem miCarto;
         private System.Windows.Forms.ToolStripMenuItem 命令菜单ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 地图组成ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pageLayout对象ToolStripMenuItem;
@@ -340,6 +360,8 @@ namespace AppGIS1
         private System.Windows.Forms.ComboBox cbBookmarkList;
         private System.Windows.Forms.ToolStripMenuItem miAccessData;
         private System.Windows.Forms.ToolStripMenuItem transformData;
+        private System.Windows.Forms.ToolStripMenuItem miRenderSimply;
+        private System.Windows.Forms.ToolStripMenuItem miGetRendererInfo;
     }
 }
 

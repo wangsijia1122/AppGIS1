@@ -18,7 +18,6 @@ using ESRI.ArcGIS.esriSystem;
 using ESRI.ArcGIS.Geometry;
 using ESRI.ArcGIS.SystemUI;
 using ESRI.ArcGIS.Output;
-/*using Symbology;*/
 using ESRI.ArcGIS.DataSourcesFile;
 /*using ESRI.ArcGIS.Utility;*/
 
@@ -62,12 +61,12 @@ namespace AppGIS1
             string strFileName = OpenFdlg.FileName;
             if (strFileName == string.Empty)
                 return;
-            string pathName = System.IO.Path.GetDirectoryName(strFileName);
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(strFileName);
+            string pathName = System.IO.Path.GetDirectoryName(strFileName); // pathName文件夹路径
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(strFileName); // fileName不包含扩展名的文件名
             axMapControl1.AddShapeFile(pathName, fileName);
-            axMapControl2.ClearLayers();
+            axMapControl2.ClearLayers(); // 鹰眼视图显示单个图层，注释掉显示多个图层
             axMapControl2.AddShapeFile(pathName, fileName);
-            axMapControl2.Extent = axMapControl2.FullExtent;
+            axMapControl2.Extent = axMapControl2.FullExtent; // 设置为全局视图
         }
         
         //创建书签
@@ -88,7 +87,7 @@ namespace AppGIS1
             cbBookmarkList.Items.Add(aoiBookmark.Name);
         }
 
-        private void miCreateBookmark_Click(object sender, EventArgs e)
+        private void miCreateBookmark_Click(object sender, EventArgs e) // 点击创建书签事件
         {
             AdmitBookmarkName frmABN = new AdmitBookmarkName(this);
             frmABN.Show();
@@ -204,96 +203,63 @@ namespace AppGIS1
             dataBoard.Show();
         }
 
-        public static bool ConvertFeatureClass(
-            IWorkspace sourceWorkspace,
-            IWorkspace targetWorkspace,
-            string nameOfSourceFeatureClass,
-            string nameOfTargetFeatureClass,
-            IQueryFilter queryFilter)
+        private void transformData_Click(object sender, EventArgs e) // 数据转换点击事件
         {
-            //创建一个源工作空间名名称IWorkspaceName对象sourceWorkspaceName
-            IDataset sourceWorkspaceDataset = (IDataset)sourceWorkspace;
-            IWorkspaceName sourceWorkspaceName = (IWorkspaceName)sourceWorkspaceDataset.FullName;
-            //创建源数据集名称IDatasetName对象sourceDatasetName
-            IFeatureClassName sourceFeatureClassName = new FeatureClassNameClass();
-            IDatasetName sourceDatasetName = (IDatasetName)sourceFeatureClassName;
-            sourceDatasetName.WorkspaceName = sourceWorkspaceName;
-            sourceDatasetName.Name = nameOfSourceFeatureClass;
+            Transform transform = new Transform(" ","qh1", " ", "traqh");
+            transform.m_frmMain = this;//子窗体调用主窗体函数定义
+            transform.Show();
+        }
 
-            //创建一个目标工作空间名名称IWorkspaceName对象targetWorkspaceName
-            IDataset targetWorkspaceDataset = (IDataset)targetWorkspace;
-            IWorkspaceName targetWorkspaceName = (IWorkspaceName)targetWorkspaceDataset.FullName;
-            //创建目标数据集名称IDatasetName对象targetDatasetName
-            IFeatureClassName targetFeatureClassName = new FeatureClassNameClass();
-            IDatasetName targetDatasetName = (IDatasetName)targetFeatureClassName;
-            targetDatasetName.WorkspaceName = targetWorkspaceName;
-            targetDatasetName.Name = nameOfTargetFeatureClass;
-
-            //打开输入要素类，并获取其字段定义sourceFeatureClassFields
-            ESRI.ArcGIS.esriSystem.IName sourceName = (ESRI.ArcGIS.esriSystem.IName)sourceFeatureClassName;
-            IFeatureClass sourceFeatureClass = (IFeatureClass)sourceName.Open();
-            //验证源和目标字段名称对象的有效性，因为要实现不同类型数据集之间的转换
-            IFieldChecker fieldChecker = new FieldCheckerClass();
-            IFields targetFeatureClassFields;
-            IFields sourceFeatureClassFields = sourceFeatureClass.Fields;
-            IEnumFieldError enumFieldError;
-            //设置字段检查对象的参数，报考源和目标工作空间
-            fieldChecker.InputWorkspace = sourceWorkspace;
-            fieldChecker.ValidateWorkspace = targetWorkspace;
-            fieldChecker.Validate(sourceFeatureClassFields, out enumFieldError, out targetFeatureClassFields);
-
-            //返回信息是否存在不匹配的字段
-            if(enumFieldError !=null)
-            {
-                enumFieldError.Reset();
-                IFieldError fieldError;
-                while((fieldError = enumFieldError .Next ())!=null )
-                {
-                    String sErrorMsg= String.Format("导出数据是监测到字段匹配错误：{0}，{1}",sourceFeatureClassFields .get_Field(fieldError .FieldIndex ).Name ,fieldError .FieldError .ToString());
-                    MessageBox.Show(sErrorMsg);
-                }
-                return false;//匹配错误返回转换失败
-
-            }
-
-            //循环输出字段，找到几何字段
-            IField geometryField;
-            for(int i=0;i<targetFeatureClassFields.FieldCount;i++)
-            {
-                if(targetFeatureClassFields.get_Field(i).Type ==esriFieldType.esriFieldTypeGeometry)
-                {
-                    geometryField = targetFeatureClassFields.get_Field(i);
-                    //获取几何字段的几何定义
-                    IGeometryDef geometryDef = geometryField.GeometryDef;
-                    //给输出几何字段一个几何索引和格网尺寸
-                    IGeometryDefEdit targetFCGeoDefEdit = (IGeometryDefEdit)geometryDef;
-                    targetFCGeoDefEdit.GridCount_2 = 1;
-                    targetFCGeoDefEdit.set_GridSize(0, 0);
-                    targetFCGeoDefEdit.SpatialReference_2 = geometryField.GeometryDef.SpatialReference;
-                    //如果要转换所有数据，则数据过滤对象为空即可，不然定义数据过滤条件
-                    if(queryFilter==null)
-                    {
-                        queryFilter = new QueryFilterClass();
-                        queryFilter.WhereClause = "";
-
-                    }
-                    //装载数据转换类，实现数据转换
-                    IFeatureDataConverter fctofc = new FeatureDataConverterClass();
-                    IEnumInvalidObject enumErrors = fctofc.ConvertFeatureClass(
-                        sourceFeatureClassName, queryFilter, null, targetFeatureClassName, geometryDef, targetFeatureClassFields, "", 1000, 0);
-                    //设置Flush自动推送要素参数为1000
-                    return true;
-                }
-            }
-            return false;
+        private void axTOCControl1_OnMouseDown(object sender, ITOCControlEvents_OnMouseDownEvent e)
+        {
+            esriTOCControlItem item = esriTOCControlItem.esriTOCControlItemNone;
+            IBasicMap pBasicMap = null;
+            ILayer pLayer = null;
+            object unk = null;
+            object data = null;
+            axTOCControl1.HitTest(e.x, e.y, ref item, ref pBasicMap, ref pLayer, ref unk, ref data);
 
         }
 
-        private void transformData_Click(object sender, EventArgs e)
+        private void miRenderSimply_Click(object sender, EventArgs e)
         {
-            Transform transform = new Transform("D:\\ArcGIS\\geo.gdb","qh1", "D:\\ArcGIS\\geo2.gdb", "traqh");
-            
-            transform.Show();
+            //获取渲染图层
+            DataOperator dataOperator = new DataOperator(axMapControl1.Map);
+            ILayer layer = dataOperator.GetLayerByName("cntry02");
+
+            //通过IRgbColor接口新建RgbColor类型对象，将其设置为红色
+            IRgbColor rgbColor = new RgbColorClass();
+            rgbColor.Red = 255;
+            rgbColor.Green = 0;
+            rgbColor.Blue  = 0;
+
+            //获取渲染图层消息，并通过IColor接口访问设置好的颜色对象
+            ISymbol symbol = MapComposer.GetSymbolFromLayer(layer);
+            IColor color = rgbColor as IColor;
+
+            //实现渲染图层的简单渲染，并判断是否成功。若函数返回true,当前活动视图刷新，显示渲染效果，并使得渲染图层菜单项不再可用；
+            //若函数返回false,消息框提示失败
+            bool bRes = MapComposer.RenderSimple(layer, color);
+           if(bRes)
+           {
+                axTOCControl1.ActiveView.ContentsChanged();
+                axMapControl1.ActiveView.Refresh();
+                miRenderSimply.Enabled = false;
+           }
+           else
+           {
+                MessageBox.Show("简单渲染图层失败");
+           }                      
+        }
+
+        private void miGetRendererInfo_Click(object sender, EventArgs e)
+        {
+            //获取渲染图层
+            DataOperator dataOperator = new DataOperator(axMapControl1.Map);
+            ILayer layer = dataOperator.GetLayerByName("cntry02");
+
+            //消息框提示该图层的渲染器类型信息
+            MessageBox.Show(MapComposer.GetRendererTypeByLayer(layer));
         }
     }
 }

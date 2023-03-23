@@ -113,6 +113,7 @@
     <Compile Include="AdmitBookmarkName.Designer.cs">
       <DependentUpon>AdmitBookmarkName.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapComposer.cs" />
     <Compile Include="DataBoard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,6 +121,12 @@
       <DependentUpon>DataBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="DataOperator.cs" />
+    <Compile Include="Error.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Error.Designer.cs">
+      <DependentUpon>Error.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,6 +146,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataBoard.resx">
       <DependentUpon>DataBoard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Error.resx">
+      <DependentUpon>Error.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

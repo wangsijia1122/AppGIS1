@@ -8,10 +8,11 @@ using ESRI.ArcGIS.Carto;
 using ESRI.ArcGIS.Geometry;
 using ESRI.ArcGIS.Geodatabase;
 using ESRI.ArcGIS.DataSourcesFile;
+using ESRI.ArcGIS.Display;
 
 namespace AppGIS1
 {
-    class DataOperator
+    public class DataOperator
     {
         //保存当前地图对象
         public IMap m_map;
@@ -45,7 +46,7 @@ namespace AppGIS1
 
         public DataTable GetContinentsNames()
         {
-            //获取“Continents”图层，利用IFeatureLayer接口访问，并判断是否成功。若失败，函数返回空
+            //获取“cntry02”图层，利用IFeatureLayer接口访问，并判断是否成功。若失败，函数返回空
             ILayer layer = GetLayerByName("cntry02");
             IFeatureLayer featureLayer = layer as IFeatureLayer;
             if(featureLayer ==null)
