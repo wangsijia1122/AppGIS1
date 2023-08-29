@@ -65,8 +65,8 @@ namespace AppGIS1
             }
             else
             {
-                error_ error = new error_(); // 显示运行出错窗体
-                error.Show();
+                MessageBox.Show("运行失败！");
+                return;
             }
         }
 

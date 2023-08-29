@@ -29,6 +29,7 @@ namespace AppGIS1
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdmitBookmarkName));
             this.tbBookmarkName = new System.Windows.Forms.TextBox();
             this.btnAdmit = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -57,6 +58,7 @@ namespace AppGIS1
             this.ClientSize = new System.Drawing.Size(315, 156);
             this.Controls.Add(this.btnAdmit);
             this.Controls.Add(this.tbBookmarkName);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AdmitBookmarkName";
             this.Text = "书签名称设置";
             this.ResumeLayout(false);
